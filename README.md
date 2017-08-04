@@ -23,7 +23,9 @@ $ java -jar CustomHttpResnposerServer.jar
 * Agregar constantes de HTTP STATUS en HttpResponse
 * En la Interface gráfica
   * Respuesta gráfica guiada (Wizzard), con la posibilidad de agregar cabeceras y body. Posibilidad de cargar el body desde un archivo. 
-  * Respuestas preguardadas en archivos
+  * Respuestas preguardadas en archivos en reaspuesta plana
+  * Respuestas automática en base a verbo y path?
+  * Reemplazo optativo de variables en body?
 * Escucho propuestas
 * Recibo aportes con muchas ganas!  
 
