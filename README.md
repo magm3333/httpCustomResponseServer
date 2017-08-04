@@ -1,7 +1,7 @@
 # HTTP Custom Response Server
 Creado con propósitos didácticos 
 
-Autor: Mariano García Mattío - email: [magm3333@gmail.com](mailto:magm3333@gmail.com)
+Autor: Mariano García Mattío - email: [magm3333@gmail.com](mailto:magm3333@gmail.com) - Twitter: [@magm3333](https://twitter.com/magm3333)
 
 ### Instalar y Ejecutar
 
@@ -9,9 +9,11 @@ Para ejecutar se requiere JRE 1.7 o posterior.
 Para compilar y empaquetar, se requiere Maven 3.x
  
 ```
+$ git clone https://github.com/magm3333/httpCustomResponseServer
+$ cd httpCustomResponseServer
 $ mvn clean package
 ```
-Una vez empaquetado, en la carpeta target se encuentra el archivo CustomHttpResnposerServer.jar, se puede ejecutar de la sieguiente forma:
+Una vez empaquetado, en la carpeta target se encontrará el archivo CustomHttpResnposerServer.jar, se puede ejecutar de la siguiente forma:
 
 ```
 $ java -jar CustomHttpResnposerServer.jar

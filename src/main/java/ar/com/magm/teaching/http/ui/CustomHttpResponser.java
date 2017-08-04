@@ -53,7 +53,7 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 	}
 
 	public CustomHttpResponser() {
-		setTitle("Custom HTTP Responser (by Magm 2017)");
+		setTitle("Custom HTTP Responser (by Magm 2017) - Email: magm3333@gmail.com - Twitter: @magm3333");
 		setSize(800, 600);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout(0, 0));
