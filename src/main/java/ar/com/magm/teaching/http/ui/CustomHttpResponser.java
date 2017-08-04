@@ -25,6 +25,9 @@ import ar.com.magm.teaching.http.HttpResponse;
 import ar.com.magm.teaching.http.HttpServer;
 import ar.com.magm.teaching.http.HttpServerListener;
 import ar.com.magm.teaching.http.ServerCommands;
+import javax.swing.JList;
+import javax.swing.JSplitPane;
+import javax.swing.JScrollPane;
 /**
  * Interface gráfica simple
  * 
@@ -54,7 +57,8 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 
 	public CustomHttpResponser() {
 		setTitle("Custom HTTP Responser (by Magm 2017) - Email: magm3333@gmail.com - Twitter: @magm3333");
-		setSize(800, 600);
+		//setSize(800, 600);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -123,8 +127,6 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		resp.addHeader("Content-Type", "text/plain");
 		resp.addHeader("Connection", "close");
 		resp.setBody("Ahora es: "+new Date());
-		plainResponse = new JTextArea(resp.toString());
-		panel_2.add(plainResponse, BorderLayout.CENTER);
 		
 		panel_3 = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel_3.getLayout();
@@ -146,6 +148,23 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 			}
 		});
 		panel_3.add(btnSendResponse);
+		plainResponse = new JTextArea(resp.toString());
+		//panel_2.add(plainResponse, BorderLayout.CENTER);
+		
+		splitPane = new JSplitPane();
+		panel_2.add(splitPane, BorderLayout.CENTER);
+		
+		scrollPane = new JScrollPane();
+		splitPane.setLeftComponent(scrollPane);
+		
+		preResponseFiles = new JList();
+		scrollPane.setViewportView(preResponseFiles);
+		
+		scrollPane_1 = new JScrollPane();
+		splitPane.setRightComponent(scrollPane_1);
+		
+		//textArea = new JTextArea();
+		scrollPane_1.setViewportView(plainResponse);
 		
 		panel_4 = new JPanel();
 		tabbedPane.addTab("Response (Wizzard)", null, panel_4, null);
@@ -159,6 +178,11 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 	}
 
 	private HttpResponse response;
+	private JSplitPane splitPane;
+	private JScrollPane scrollPane;
+	private JList preResponseFiles;
+	private JScrollPane scrollPane_1;
+	//private JTextArea textArea;
 	@Override
 	public void request(HttpRequest request, HttpResponse response, ServerCommands serverCommands) {
 		panelContenido.setVisible(true);
