@@ -26,6 +26,7 @@ $ java -jar CustomHttpResnposerServer.jar
   * Respuestas preguardadas en archivos en reaspuesta plana
   * Respuestas automática en base a verbo y path?
   * Reemplazo optativo de variables en body?
+* Interface gráfica Web!
 * Escucho propuestas
 * Recibo aportes con muchas ganas!  
 
