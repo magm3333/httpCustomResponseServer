@@ -22,8 +22,9 @@ $ java -jar CustomHttpResnposerServer.jar
 * Emitir errores de parseo en el mensaje de petición
 * Agregar constantes de HTTP STATUS en HttpResponse
 * En la Interface gráfica
-  * Respuesta gráfica guiada (Wizzard), con la posibilidad de agregar cabeceras y body. Posibilidad de cargar el body desde un archivo. 
-  * Respuestas preguardadas en archivos en reaspuesta plana
+  * Respuesta gráfica guiada (Wizzard), con la posibilidad de agregar cabeceras y body. 
+  * Guardar prerespuestas en archivo
+  * Chequear que siempre existan los defaults (no escribirlos)  
   * Respuestas automática en base a verbo y path?
   * Reemplazo optativo de variables en body?
 * Interface gráfica Web!
