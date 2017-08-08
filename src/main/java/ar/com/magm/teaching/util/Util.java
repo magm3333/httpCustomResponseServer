@@ -105,9 +105,13 @@ public final class Util {
 		try {
 			rr = new HttpResponse(null, sb.toString());
 			r = rr.toString();
-		} catch (IOException | BadHttpFormatException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			r = e.getMessage();
+		} catch (BadHttpFormatException e) {
+			e.printStackTrace();
+			r = e.getMessage();
+			
 		}
 		s.close();
 		return r;
