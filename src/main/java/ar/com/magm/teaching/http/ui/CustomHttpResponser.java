@@ -85,6 +85,11 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
+		try {
+			Util.createDefaults();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		new CustomHttpResponser().setVisible(true);
 	}
 
@@ -292,7 +297,7 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		} while (seguir);
 		try {
 			if (nameFile.length() > 0) {
-				Util.savePreResponse(nameFile, getPlainResponse().getText(), this);
+				Util.savePreResponse(nameFile, getPlainResponse().getText(), this,false);
 				loadAndSetPreResponsesModel();
 			}
 		} catch (IOException e) {

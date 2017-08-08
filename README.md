@@ -33,7 +33,6 @@ Existen dos tipos de expresiones, simples y full body, las expresiones simples s
 * Agregar constantes de HTTP STATUS en HttpResponse
 * En la Interface gráfica
   * Respuesta gráfica guiada (Wizzard), con la posibilidad de agregar cabeceras y body. 
-  * Chequear que siempre existan los defaults (no escribirlos)  
   * Respuestas automática en base a verbo y path?
   * Calcular el tipo mime cuando en las expresiones ${selectFile} y ${loadFile;localPath}
   * Respuesta automática para favicon

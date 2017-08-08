@@ -76,11 +76,11 @@ public final class Util {
 
 	}
 
-	public static void savePreResponse(String name, String content, JFrame parent) throws IOException {
+	public static void savePreResponse(String name, String content, JFrame parent, boolean ensure) throws IOException {
 		File f = new File(getAndEnsureUserForlder(), "preresponses");
 		File ff = new File(f, name + ".http");
 		boolean save = true;
-		if (ff.exists()) {
+		if (ff.exists() && !ensure) {
 			save = JOptionPane.showConfirmDialog(parent,
 					"El archivo [" + name + "], ya existe, desea sobreescribirlo?") == JOptionPane.YES_OPTION;
 		}
@@ -113,13 +113,13 @@ public final class Util {
 		return r;
 	}
 
-	private static void createDefaults() throws IOException {
+	public static void createDefaults() throws IOException {
 		HttpResponse resp = new HttpResponse();
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
 		resp.addHeader("Content-Type", MimeType.TEXT_PLAIN.mimeType());
 		resp.addHeader("Connection", "close");
 		resp.setBody("Hola desde HTTPCustomResponseServer - That's rock & roll!".getBytes());
-		savePreResponse("default Text Plain", resp.toString(), null);
+		savePreResponse("default Text Plain", resp.toString(), null,true);
 
 		resp = new HttpResponse();
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
@@ -128,14 +128,14 @@ public final class Util {
 		resp.setBody(
 				"<html><body><h3>Hola desde HTTPCustomResponseServer</h3><h4>That's rock & roll!</h4></body></html>"
 						.getBytes());
-		savePreResponse("default HTML", resp.toString(), null);
+		savePreResponse("default HTML", resp.toString(), null,true);
 
 		resp = new HttpResponse();
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
 		resp.addHeader("Content-Type", MimeType.JSON.mimeType());
 		resp.addHeader("Connection", "close");
 		resp.setBody("{\"id\":1,\"value\":\"Hola desde HTTPCustomResponseServer - That's rock & roll!\"}".getBytes());
-		savePreResponse("default JSON", resp.toString(), null);
+		savePreResponse("default JSON", resp.toString(), null,true);
 
 		resp = new HttpResponse();
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
@@ -144,28 +144,28 @@ public final class Util {
 		resp.setBody(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?><message>Hola desde HTTPCustomResponseServer - That's rock &amp; roll!</message>"
 						.getBytes());
-		savePreResponse("default XML", resp.toString(), null);
+		savePreResponse("default XML", resp.toString(), null,true);
 
 		resp = new HttpResponse();
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
 		resp.addHeader("Content-Type", MimeType.PDF.mimeType());
 		resp.addHeader("Connection", "close");
 		resp.setBody("${selectFile;pdf}".getBytes());
-		savePreResponse("default PDF selector", resp.toString(), null);
+		savePreResponse("default PDF selector", resp.toString(), null,true);
 
 		resp = new HttpResponse();
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
 		resp.addHeader("Content-Type", MimeType.HTML.mimeType());
 		resp.addHeader("Connection", "close");
 		resp.setBody("<html><body><h2>${now}</h2></body></html>".getBytes());
-		savePreResponse("default now expression", resp.toString(), null);
+		savePreResponse("default now expression", resp.toString(), null,true);
 
 		resp = new HttpResponse();
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
 		resp.addHeader("Content-Type", MimeType.PDF.mimeType());
 		resp.addHeader("Connection", "close");
 		resp.setBody("${loadFile;/home/mariano/defaultPDF.pdf}".getBytes());
-		savePreResponse("default load file pdf", resp.toString(), null);
+		savePreResponse("default load file pdf", resp.toString(), null,true);
 }
 
 }
