@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.Socket;
 import java.text.NumberFormat;
 import java.util.Date;
 
@@ -99,8 +98,10 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		try {
 			responsesLM = Util.getPreResponsesListModel(null);
 			getPreResponseFiles().setModel(responsesLM);
-		} catch (IOException | BadHttpFormatException e2) {
-			e2.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch(BadHttpFormatException e) {
+			e.printStackTrace();
 		}
 	}
 
