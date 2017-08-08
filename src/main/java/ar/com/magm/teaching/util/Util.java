@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
 
 import javax.swing.DefaultListModel;
@@ -13,7 +14,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 
+import ar.com.magm.teaching.http.BadHttpFormatException;
 import ar.com.magm.teaching.http.HttpResponse;
+import ar.com.magm.teaching.http.HttpResponseJListAdapter;
 import ar.com.magm.teaching.http.MimeType;
 
 public final class Util {
@@ -63,10 +66,11 @@ public final class Util {
 		return r;
 	}
 
-	public static ListModel<String> getPreResponsesNamesListModel() throws IOException{
-		DefaultListModel<String> dlm = new DefaultListModel<String>();
-		for(String s:getPreResponsesNames()) {
-			dlm.addElement(s);
+	public static ListModel<HttpResponseJListAdapter> getPreResponsesListModel(Socket socket)
+			throws IOException, BadHttpFormatException {
+		DefaultListModel<HttpResponseJListAdapter> dlm = new DefaultListModel<HttpResponseJListAdapter>();
+		for (String s : getPreResponsesNames()) {
+			dlm.addElement(new HttpResponseJListAdapter(new HttpResponse(socket, getPreResponse(s)), s));
 		}
 		return dlm;
 
@@ -96,8 +100,17 @@ public final class Util {
 		while (s.hasNextLine()) {
 			sb.append(s.nextLine() + "\n");
 		}
+		String r = "";
+		HttpResponse rr;
+		try {
+			rr = new HttpResponse(null, sb.toString());
+			r = rr.toString();
+		} catch (IOException | BadHttpFormatException e) {
+			e.printStackTrace();
+			r = e.getMessage();
+		}
 		s.close();
-		return sb.toString();
+		return r;
 	}
 
 	private static void createDefaults() throws IOException {
@@ -105,7 +118,7 @@ public final class Util {
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
 		resp.addHeader("Content-Type", MimeType.TEXT_PLAIN.mimeType());
 		resp.addHeader("Connection", "close");
-		resp.setBody("Hola desde HTTPCustomResponseServer - That's rock & roll!");
+		resp.setBody("Hola desde HTTPCustomResponseServer - That's rock & roll!".getBytes());
 		savePreResponse("default Text Plain", resp.toString(), null);
 
 		resp = new HttpResponse();
@@ -113,14 +126,15 @@ public final class Util {
 		resp.addHeader("Content-Type", MimeType.HTML.mimeType());
 		resp.addHeader("Connection", "close");
 		resp.setBody(
-				"<html><body><h3>Hola desde HTTPCustomResponseServer</h3><h4>That's rock & roll!</h4></body></html>");
+				"<html><body><h3>Hola desde HTTPCustomResponseServer</h3><h4>That's rock & roll!</h4></body></html>"
+						.getBytes());
 		savePreResponse("default HTML", resp.toString(), null);
 
 		resp = new HttpResponse();
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
 		resp.addHeader("Content-Type", MimeType.JSON.mimeType());
 		resp.addHeader("Connection", "close");
-		resp.setBody("{\"id\":1,\"value\":\"Hola desde HTTPCustomResponseServer - That's rock & roll!\"}");
+		resp.setBody("{\"id\":1,\"value\":\"Hola desde HTTPCustomResponseServer - That's rock & roll!\"}".getBytes());
 		savePreResponse("default JSON", resp.toString(), null);
 
 		resp = new HttpResponse();
@@ -128,8 +142,30 @@ public final class Util {
 		resp.addHeader("Content-Type", MimeType.XML.mimeType());
 		resp.addHeader("Connection", "close");
 		resp.setBody(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?><message>Hola desde HTTPCustomResponseServer - That's rock &amp; roll!</message>");
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?><message>Hola desde HTTPCustomResponseServer - That's rock &amp; roll!</message>"
+						.getBytes());
 		savePreResponse("default XML", resp.toString(), null);
-	}
+
+		resp = new HttpResponse();
+		resp.addHeader("Server", "Custom HTTP Server 1.0");
+		resp.addHeader("Content-Type", MimeType.PDF.mimeType());
+		resp.addHeader("Connection", "close");
+		resp.setBody("${selectFile;pdf}".getBytes());
+		savePreResponse("default PDF selector", resp.toString(), null);
+
+		resp = new HttpResponse();
+		resp.addHeader("Server", "Custom HTTP Server 1.0");
+		resp.addHeader("Content-Type", MimeType.HTML.mimeType());
+		resp.addHeader("Connection", "close");
+		resp.setBody("<html><body><h2>${now}</h2></body></html>".getBytes());
+		savePreResponse("default now expression", resp.toString(), null);
+
+		resp = new HttpResponse();
+		resp.addHeader("Server", "Custom HTTP Server 1.0");
+		resp.addHeader("Content-Type", MimeType.PDF.mimeType());
+		resp.addHeader("Connection", "close");
+		resp.setBody("${loadFile;/home/mariano/defaultPDF.pdf}".getBytes());
+		savePreResponse("default load file pdf", resp.toString(), null);
+}
 
 }

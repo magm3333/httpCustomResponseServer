@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.Socket;
 import java.text.NumberFormat;
 import java.util.Date;
 
@@ -18,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -31,8 +31,12 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import ar.com.magm.teaching.expression.ExpressionParseException;
+import ar.com.magm.teaching.expression.ExpressionResolver;
+import ar.com.magm.teaching.http.BadHttpFormatException;
 import ar.com.magm.teaching.http.HttpRequest;
 import ar.com.magm.teaching.http.HttpResponse;
+import ar.com.magm.teaching.http.HttpResponseJListAdapter;
 import ar.com.magm.teaching.http.HttpServer;
 import ar.com.magm.teaching.http.HttpServerListener;
 import ar.com.magm.teaching.http.ServerCommands;
@@ -84,13 +88,13 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		new CustomHttpResponser().setVisible(true);
 	}
 
-	private ListModel<String> responsesLM = null;
+	private ListModel<HttpResponseJListAdapter> responsesLM = null;
 
 	private void loadAndSetPreResponsesModel() {
 		try {
-			responsesLM = Util.getPreResponsesNamesListModel();
+			responsesLM = Util.getPreResponsesListModel(null);
 			getPreResponseFiles().setModel(responsesLM);
-		} catch (IOException e2) {
+		} catch (IOException | BadHttpFormatException e2) {
 			e2.printStackTrace();
 		}
 	}
@@ -168,7 +172,7 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		resp.addHeader("Server", "Custom HTTP Server 1.0");
 		resp.addHeader("Content-Type", "text/plain");
 		resp.addHeader("Connection", "close");
-		resp.setBody("Ahora es: " + new Date());
+		resp.setBody(("Ahora es: " + new Date()).getBytes());
 
 		panel_3 = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel_3.getLayout();
@@ -201,17 +205,21 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		scrollPane = new JScrollPane();
 		splitPane.setLeftComponent(scrollPane);
 
-		preResponseFiles = new JList<String>();
+		preResponseFiles = new JList<HttpResponseJListAdapter>();
 		loadAndSetPreResponsesModel();
 		preResponseFiles.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()) {
 					@SuppressWarnings("unchecked")
-					JList<String> source = (JList<String>) event.getSource();
-					String selected = source.getSelectedValue().toString();
+					JList<HttpResponseJListAdapter> source = (JList<HttpResponseJListAdapter>) event.getSource();
+					String selected = null;
+					if (source != null && source.getSelectedValue()!=null)
+						selected = ((HttpResponseJListAdapter) source.getSelectedValue()).toString();
 					try {
-						plainResponse.setText(Util.getPreResponse(selected));
-						namePreRequestName = selected;
+						if (selected != null) {
+							plainResponse.setText(Util.getPreResponse(selected));
+							namePreRequestName = selected;
+						}
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 					}
@@ -240,7 +248,7 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 	private HttpResponse response;
 	private JSplitPane splitPane;
 	private JScrollPane scrollPane;
-	private JList<String> preResponseFiles;
+	private JList<HttpResponseJListAdapter> preResponseFiles;
 	private JScrollPane scrollPane_1;
 	private JButton btnSendResponseAndSave;
 
@@ -253,12 +261,20 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 
 	private void send() {
 		try {
-			response.send(getPlainResponse().getText());
+			response.setContent(plainResponse.getText());
+			response.process();
+			HttpResponse newResponse=new ExpressionResolver(response).resolve();
+			newResponse.send();
+			server.continueListening();
+			panelContenido.setVisible(false);
 		} catch (IOException e1) {
-
+			e1.printStackTrace();
+		} catch (BadHttpFormatException e1) {
+			e1.printStackTrace();
+		} catch (ExpressionParseException e) {
+			e.printStackTrace();
 		}
-		server.continueListening();
-		panelContenido.setVisible(false);
+
 	}
 
 	private void sendAndSave() {
@@ -300,7 +316,7 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		return plainResponse;
 	}
 
-	public JList<String> getPreResponseFiles() {
+	public JList<HttpResponseJListAdapter> getPreResponseFiles() {
 		return preResponseFiles;
 	}
 }
