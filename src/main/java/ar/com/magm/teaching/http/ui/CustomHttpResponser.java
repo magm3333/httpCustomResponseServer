@@ -38,8 +38,10 @@ import ar.com.magm.teaching.http.HttpResponse;
 import ar.com.magm.teaching.http.HttpResponseJListAdapter;
 import ar.com.magm.teaching.http.HttpServer;
 import ar.com.magm.teaching.http.HttpServerListener;
+import ar.com.magm.teaching.http.MimeType;
 import ar.com.magm.teaching.http.ServerCommands;
 import ar.com.magm.teaching.util.Util;
+import javax.swing.JCheckBox;
 
 /**
  * Interface gráfica simple
@@ -100,7 +102,7 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 			getPreResponseFiles().setModel(responsesLM);
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch(BadHttpFormatException e) {
+		} catch (BadHttpFormatException e) {
 			e.printStackTrace();
 		}
 	}
@@ -153,6 +155,11 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 			}
 		});
 		panel.add(btnIniciar);
+
+		antenderFavicon = new JCheckBox("Atender automáticamente request favicon");
+		antenderFavicon.setSelected(true);
+		antenderFavicon.setBackground(Color.GRAY);
+		panel.add(antenderFavicon);
 
 		panelContenido = new JPanel();
 		panelContenido.setVisible(false);
@@ -219,7 +226,7 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 					@SuppressWarnings("unchecked")
 					JList<HttpResponseJListAdapter> source = (JList<HttpResponseJListAdapter>) event.getSource();
 					String selected = null;
-					if (source != null && source.getSelectedValue()!=null)
+					if (source != null && source.getSelectedValue() != null)
 						selected = ((HttpResponseJListAdapter) source.getSelectedValue()).toString();
 					try {
 						if (selected != null) {
@@ -237,7 +244,6 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		scrollPane_1 = new JScrollPane();
 		splitPane.setRightComponent(scrollPane_1);
 
-		// textArea = new JTextArea();
 		scrollPane_1.setViewportView(plainResponse);
 
 		panel_4 = new JPanel();
@@ -257,19 +263,44 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 	private JList<HttpResponseJListAdapter> preResponseFiles;
 	private JScrollPane scrollPane_1;
 	private JButton btnSendResponseAndSave;
+	private JCheckBox antenderFavicon;
 
 	@Override
 	public void request(HttpRequest request, HttpResponse response, ServerCommands serverCommands) {
-		panelContenido.setVisible(true);
-		getPlainRequest().setText(request.getPlainMessage());
-		this.response = response;
+		boolean atendido = false;
+		if (getAntenderFavicon().isSelected()) {
+			if (request.getFullPath().toLowerCase().equals("/favicon.ico")) {
+				HttpResponse resp;
+				try {
+					resp = new HttpResponse(response.getSocket());
+					resp.setStatus(404);
+					resp.setStatusText("NOT FOUND");
+					resp.addHeader("Server", "Custom HTTP Server 1.0");
+					resp.addHeader("Content-Type", MimeType.TEXT_PLAIN.mimeType());
+					resp.addHeader("Connection", "close");
+					resp.send();
+					server.continueListening();
+					atendido = true;
+					System.out.println("Request favicon.ico atendido automáticamente");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		}
+		if (!atendido) {
+			panelContenido.setVisible(true);
+			getPlainRequest().setText(request.getPlainMessage());
+			this.response = response;
+		}
+
 	}
 
 	private void send() {
 		try {
 			response.setContent(plainResponse.getText());
 			response.process();
-			HttpResponse newResponse=new ExpressionResolver(response).resolve();
+			HttpResponse newResponse = new ExpressionResolver(response).resolve();
 			newResponse.send();
 			server.continueListening();
 			panelContenido.setVisible(false);
@@ -298,7 +329,7 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 		} while (seguir);
 		try {
 			if (nameFile.length() > 0) {
-				Util.savePreResponse(nameFile, getPlainResponse().getText(), this,false);
+				Util.savePreResponse(nameFile, getPlainResponse().getText(), this, false);
 				loadAndSetPreResponsesModel();
 			}
 		} catch (IOException e) {
@@ -324,5 +355,9 @@ public class CustomHttpResponser extends JFrame implements HttpServerListener {
 
 	public JList<HttpResponseJListAdapter> getPreResponseFiles() {
 		return preResponseFiles;
+	}
+
+	public JCheckBox getAntenderFavicon() {
+		return antenderFavicon;
 	}
 }

@@ -35,7 +35,6 @@ Existen dos tipos de expresiones, simples y full body, las expresiones simples s
   * Respuesta gráfica guiada (Wizzard), con la posibilidad de agregar cabeceras y body. 
   * Respuestas automática en base a verbo y path?
   * Calcular el tipo mime cuando en las expresiones ${selectFile} y ${loadFile;localPath}
-  * Respuesta automática para favicon
 * Interface gráfica Web!
 * Escucho propuestas
 * Recibo aportes con muchas ganas!  

@@ -68,7 +68,7 @@ public class HttpRequest {
 	}
 
 	public String getPlainMessage() {
-		return plainMessage + ( bodyPayload.length()>0 ? bodyPayload : "");
+		return plainMessage + ( bodyPayload !=null && bodyPayload.length()>0 ? bodyPayload : "");
 	}
 
 	public String getQueryString() {
@@ -98,7 +98,6 @@ public class HttpRequest {
 	}
 	
 	public void setRequestLine(String requestLine) {
-
 		this.requestLine = requestLine;
 		method = requestLine.split(" ")[0];
 		fullPath = requestLine.split(" ")[1];

@@ -54,6 +54,7 @@ public class HttpServer extends Thread implements ServerCommands {
 				}
 			}
 		} catch (Exception e) {
+			//e.printStackTrace();
 		} finally {
 			try {
 				System.out.println("Shutdown!");
