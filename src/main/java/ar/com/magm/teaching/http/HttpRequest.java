@@ -68,7 +68,7 @@ public class HttpRequest {
 	}
 
 	public String getPlainMessage() {
-		return plainMessage;
+		return plainMessage + ( bodyPayload.length()>0 ? bodyPayload : "");
 	}
 
 	public String getQueryString() {

@@ -7,6 +7,7 @@ import java.net.Socket;
 
 /**
  * Procesador de requerimientos principal
+ * 
  * @author magm
  * @version 1.0
  */
@@ -40,6 +41,7 @@ public class RequestProcessor {
 				if (line.length() != 0) {
 					if (!noBody && line.toLowerCase().startsWith("content-length")) {
 						bodyLength = Integer.parseInt(line.split(":")[1].trim());
+
 					}
 					String[] header = line.split(":");
 					r.addHeader(header[0], line.substring(header[0].length() + 1, line.length()));
